@@ -1,0 +1,188 @@
+import React, { useState, useMemo } from 'react';
+
+// Sample initial data for freelance clients
+const INITIAL_CLIENTS = [
+  {
+    id: '1',
+    name: 'Alpha Media',
+    agreementDate: '2026-05-01',
+    videosRemaining: 3,
+    videosCompleted: 5,
+    ratePerVideo: 150,
+    amountPaid: 450,
+  },
+  {
+    id: '2',
+    name: 'Apex Clothing Co.',
+    agreementDate: '2026-05-12',
+    videosRemaining: 1,
+    videosCompleted: 2,
+    ratePerVideo: 200,
+    amountPaid: 400,
+  },
+  {
+    id: '3',
+    name: 'Vertex Tech',
+    agreementDate: '2026-04-28',
+    videosRemaining: 5,
+    videosCompleted: 0,
+    ratePerVideo: 180,
+    amountPaid: 0,
+  }
+];
+
+export default function ClientTrackerApp() {
+  const [clients, setClients] = useState(INITIAL_CLIENTS);
+  const [selectedClientId, setSelectedClientId] = useState(INITIAL_CLIENTS[0]?.id || null);
+
+  // Find the currently selected client details
+  const activeClient = useMemo(() => {
+    return clients.find(c => c.id === selectedClientId);
+  }, [clients, selectedClientId]);
+
+  // Calculate global pending revenue for the current month
+  const totalPendingThisMonth = useMemo(() => {
+    return clients.reduce((sum, client) => {
+      const pendingForClient = client.videosRemaining * client.ratePerVideo;
+      return sum + pendingForClient;
+    }, 0);
+  }, [clients]);
+
+  // Helper functions to handle quick increments/decrements for tracking videos
+  const updateVideoCount = (clientId, field, direction) => {
+    setClients(prev => prev.map(client => {
+      if (client.id !== clientId) return client;
+      const currentVal = client[field];
+      const newVal = direction === 'up' ? currentVal + 1 : Math.max(0, currentVal - 1);
+      return { ...client, [field]: newVal };
+    }));
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-slate-900 text-slate-100 font-sans max-w-md mx-auto shadow-2xl overflow-hidden border border-slate-800">
+      
+      {/* App Header */}
+      <header className="bg-slate-800 px-6 py-4 border-b border-slate-700 shrink-0">
+        <h1 className="text-xl font-bold tracking-tight text-emerald-400">Freelance Client Tracker</h1>
+        <p className="text-xs text-slate-400">Production & Revenue Dashboard</p>
+      </header>
+
+      {/* Main Content Area */}
+      <main className="flex-1 overflow-y-auto p-4 space-y-6 pb-24">
+        
+        {/* Clients List Section */}
+        <section>
+          <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1">Active Clients</h2>
+          <div className="space-y-2">
+            {clients.map(client => {
+              const isSelected = client.id === selectedClientId;
+              const pendingMoney = client.videosRemaining * client.ratePerVideo;
+              
+              return (
+                <button
+                  key={client.id}
+                  onClick={() => setSelectedClientId(client.id)}
+                  className={`w-full text-left p-4 rounded-xl transition-all border ${
+                    isSelected 
+                      ? 'bg-slate-800 border-emerald-500 shadow-md' 
+                      : 'bg-slate-800/40 border-slate-800 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-semibold text-slate-200">{client.name}</h3>
+                      <p className="text-xs text-slate-400 mt-0.5">Agreement: {client.agreementDate}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs font-medium text-slate-400 block">Queue</span>
+                      <span className="text-sm font-bold text-amber-400">{client.videosRemaining} left</span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Client Detail Deep-Dive Section */}
+        {activeClient && (
+          <section className="bg-slate-800/60 border border-slate-800 rounded-2xl p-5 space-y-4">
+            <div className="border-b border-slate-800 pb-2">
+              <h2 className="text-lg font-bold text-emerald-400">{activeClient.name}</h2>
+              <p className="text-xs text-slate-400">Project Specifics & Milestone Breakdown</p>
+            </div>
+
+            {/* Video Queue Status */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-slate-800 p-3 rounded-xl border border-slate-700/50">
+                <span className="text-xs text-slate-400 block mb-1">Remaining Videos</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-xl font-bold text-amber-400">{activeClient.videosRemaining}</span>
+                  <div className="flex space-x-1">
+                    <button 
+                      onClick={() => updateVideoCount(activeClient.id, 'videosRemaining', 'down')}
+                      className="w-6 h-6 rounded bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-xs font-bold"
+                    >-</button>
+                    <button 
+                      onClick={() => updateVideoCount(activeClient.id, 'videosRemaining', 'up')}
+                      className="w-6 h-6 rounded bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-xs font-bold"
+                    >+</button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-800 p-3 rounded-xl border border-slate-700/50">
+                <span className="text-xs text-slate-400 block mb-1">Completed Videos</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-xl font-bold text-emerald-400">{activeClient.videosCompleted}</span>
+                  <div className="flex space-x-1">
+                    <button 
+                      onClick={() => updateVideoCount(activeClient.id, 'videosCompleted', 'down')}
+                      className="w-6 h-6 rounded bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-xs font-bold"
+                    >-</button>
+                    <button 
+                      onClick={() => updateVideoCount(activeClient.id, 'videosCompleted', 'up')}
+                      className="w-6 h-6 rounded bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-xs font-bold"
+                    >+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Financial Status Table Grid */}
+            <div className="space-y-2 pt-2 text-sm">
+              <div className="flex justify-between border-b border-slate-800/80 py-1.5">
+                <span className="text-slate-400">Rate per video</span>
+                <span className="font-medium text-slate-200">${activeClient.ratePerVideo}</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-800/80 py-1.5">
+                <span className="text-slate-400">Amount already paid</span>
+                <span className="font-medium text-emerald-400">${activeClient.amountPaid}</span>
+              </div>
+              <div className="flex justify-between py-1.5">
+                <span className="text-slate-400">Outstanding balance</span>
+                <span className="font-bold text-amber-400">
+                  ${activeClient.videosRemaining * activeClient.ratePerVideo}
+                </span>
+              </div>
+            </div>
+          </section>
+        )}
+      </main>
+
+      {/* Persistent Bottom Sticky Bar: Monthly Revenue Calculator */}
+      <footer className="absolute bottom-0 left-0 right-0 bg-slate-950 border-t border-slate-800 px-6 py-4 flex items-center justify-between shadow-xl shrink-0 max-w-md mx-auto">
+        <div>
+          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Estimated Payout</span>
+          <p className="text-xs text-slate-500">Remaining work value</p>
+        </div>
+        <div className="text-right">
+          <span className="text-2xl font-black text-emerald-400 tracking-tight">
+            ${totalPendingThisMonth.toLocaleString()}
+          </span>
+        </div>
+      </footer>
+
+    </div>
+  );
+}
