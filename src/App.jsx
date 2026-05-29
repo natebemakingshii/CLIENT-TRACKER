@@ -22,7 +22,7 @@ const generateUniqueTheme = (seedString) => {
 const STAGES = ["RAW DEPLOY", "ASSEMBLY CUT", "FINE COLOR", "AUDIO SWEET", "VFX WRAP", "ARCHIVE DONE"];
 
 // ==========================================
-// --- NEW FEATURE 1: BURNOUT MONITOR ---
+// --- MODULE 1: BURNOUT MONITOR ---
 // ==========================================
 function BurnoutMonitor({ assignedVideos, completedVideos }) {
   const remaining = Math.max(0, assignedVideos - completedVideos);
@@ -109,7 +109,7 @@ function BurnoutMonitor({ assignedVideos, completedVideos }) {
 }
 
 // ==========================================
-// --- NEW FEATURE 2: SHOOT SCHEDULER ---
+// --- MODULE 2: SHOOT SCHEDULER ---
 // ==========================================
 function ShootScheduler({ shoots }) {
   return (
@@ -164,7 +164,7 @@ function ShootScheduler({ shoots }) {
 }
 
 // ==========================================
-// --- NEW FEATURE 3: DEADLINE PREDICTOR ---
+// --- MODULE 3: DEADLINE PREDICTOR ---
 // ==========================================
 function DeadlinePredictor({ totalVideos, completedVideos, weeklyVelocity }) {
   const remaining = totalVideos - completedVideos;
@@ -220,7 +220,7 @@ function DeadlinePredictor({ totalVideos, completedVideos, weeklyVelocity }) {
 }
 
 // ==========================================
-// --- NEW FEATURE 4: AUDIT LOG VIEW ---
+// --- MODULE 4: FINANCIAL PERFORMANCE MATRIX ---
 // ==========================================
 function FinancialAuditTable({ rows }) {
   return (
@@ -273,13 +273,13 @@ function FinancialAuditTable({ rows }) {
 }
 
 // ==========================================
-// --- NEW FEATURE 5: CONTENT PIPELINE ---
+// --- MODULE 5: STAGE LAYOUT MATRIX ---
 // ==========================================
 function ContentPipelineView({ cards }) {
   return (
     <div className="w-full bg-white border-4 border-black p-6 shadow-[5px_5px_0px_0px_#000000] font-mono rounded-2xl">
       <div className="border-b-4 border-black pb-3 mb-4 flex justify-between items-center">
-        <span className="text-sm font-black uppercase tracking-tight">📋 Content Production Pipeline Layout</span>
+        <span className="text-sm font-black uppercase tracking-tight">📋 CONTENT PRODUCTION PIPELINE LAYOUT</span>
         <span className="text-[9px] bg-[#FFDE4D] border-2 border-black px-2 py-0.5 font-bold uppercase rounded">Hacker Matrix</span>
       </div>
 
@@ -312,7 +312,7 @@ function ContentPipelineView({ cards }) {
 }
 
 // ==========================================
-// --- COMPONENT: STICKY TODO LOG ---
+// --- MODULE 6: STICKY TASK VAULT ---
 // ==========================================
 const StickyTodoLog = ({ refreshTrigger, onTodoStateChange }) => {
   const [todos, setTodos] = useState([]);
@@ -487,7 +487,7 @@ const StickyTodoLog = ({ refreshTrigger, onTodoStateChange }) => {
 };
 
 // ==========================================
-// --- COMPONENT: PAYMENT RADAR CALENDAR ---
+// --- MODULE 7: PAYMENT RADAR CALENDAR ---
 // ==========================================
 const PaymentRadar = ({ clients }) => {
   const [monthOffset, setMonthOffset] = useState(0);
@@ -510,8 +510,8 @@ const PaymentRadar = ({ clients }) => {
       const dateKey = `${dateObj.getFullYear()}-${dateObj.getMonth()}-${dateObj.getDate()}`;
       map[dateKey] = [];
       clients.forEach(client => {
-        if (!client.agreementDate) return;
-        const agreement = new Date(client.agreementDate);
+        if (!client.agreement_date) return;
+        const agreement = new Date(client.agreement_date);
         if (agreement.getDate() === dateObj.getDate()) {
           map[dateKey].push(client);
         }
