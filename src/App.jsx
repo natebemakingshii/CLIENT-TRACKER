@@ -416,12 +416,12 @@ function PaymentRadarCalendar({ clients }) {
   const rangeLabel = startMonthLabel === endMonthLabel ? startMonthLabel : `${startMonthLabel} / ${endMonthLabel}`;
 
   return (
-    <div className="bg-[#FEF08A] border-3 border-black rounded-2xl p-4 shadow-[5px_5px_0px_0px_#000] lg:rotate-1 w-full relative">
-      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-neutral-900/10 backdrop-blur-xs border border-dashed border-black/30 px-6 py-1 text-[9px] font-mono tracking-widest text-black/60 uppercase -rotate-2">
+    <div className="bg-[#FEF08A] border-4 border-black rounded-2xl p-4 shadow-[5px_5px_0px_0px_#000] lg:rotate-1 w-full relative">
+      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FFD93D] border-2 border-black font-mono font-black px-4 py-0.5 text-[9px] uppercase tracking-wider rounded shadow-[2px_2px_0px_0px_#000]">
         📌 PAYMENT RADAR
       </div>
 
-      <div className="flex justify-between items-center mb-3 border-b-2 border-black pb-2 mt-2">
+      <div className="flex justify-between items-center mb-3 border-b-4 border-black pb-2 mt-2">
         <button 
           type="button" 
           onClick={() => setMonthOffset(prev => prev - 1)}
@@ -442,9 +442,10 @@ function PaymentRadarCalendar({ clients }) {
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 bg-black p-1.5 rounded-xl border border-black shadow-[inner_2px_2px_4px_rgba(0,0,0,0.4)]">
+      {/* Grid Container changed from black to light neutral with a solid 2px border */}
+      <div className="grid grid-cols-7 gap-1 bg-white p-1.5 rounded-xl border-2 border-black">
         {['M','T','W','T','F','S','S'].map((day, dIdx) => (
-          <div key={dIdx} className="text-center text-[7px] font-black font-mono text-neutral-400 uppercase py-0.5">{day}</div>
+          <div key={dIdx} className="text-center text-[8px] font-black font-mono text-gray-400 uppercase py-0.5">{day}</div>
         ))}
 
         {rollingDays.map((dateObj, idx) => {
@@ -462,22 +463,29 @@ function PaymentRadarCalendar({ clients }) {
           const isToday = new Date().toISOString().split('T')[0] === dayStr;
           const isPastDay = new Date(new Date().setHours(0,0,0,0)) > dateObj;
 
-          let blockBg = "bg-neutral-900 text-neutral-500 border border-neutral-800/40";
-          if (hasPayout) blockBg = "bg-amber-400 text-black border border-black shadow-[1px_1px_0px_0px_rgba(255,255,255,0.2)] cursor-pointer group relative";
-          if (isToday) blockBg = "bg-white text-black border-2 border-dashed border-red-500 font-black";
+          // Default styling changed from dark neutral to clear light neutral with sharp borders
+          let blockBg = "bg-neutral-50 text-neutral-400 border border-neutral-300";
+          
+          if (hasPayout) {
+            blockBg = "bg-[#B1E55A] text-black border-2 border-black shadow-[1px_1px_0px_0px_#000] cursor-pointer group relative font-black";
+          }
+          
+          if (isToday) {
+            blockBg = "bg-black text-white border-2 border-black font-black shadow-[1px_1px_0px_0px_#000]";
+          }
 
           return (
-            <div key={idx} className={`aspect-square rounded flex flex-col items-center justify-center relative ${blockBg}`}>
-              <span className={`text-[9px] font-mono leading-none ${isToday ? 'text-red-500 font-black' : ''}`}>{dayNumber}</span>
+            <div key={idx} className={`aspect-square rounded-lg flex flex-col items-center justify-center relative ${blockBg}`}>
+              <span className="text-[9px] font-mono leading-none">{dayNumber}</span>
               {hasPayout && (
                 <>
                   <div className="flex gap-0.5 mt-0.5">
                     {matchingClients.map(c => (
-                      <span key={c.id} className={`w-1 h-1 rounded-full ${isPastDay ? 'bg-neutral-600 line-through' : 'bg-emerald-500'}`} />
+                      <span key={c.id} className={`w-1.5 h-1.5 rounded-full border border-black ${isPastDay ? 'bg-neutral-400' : 'bg-white'}`} />
                     ))}
                   </div>
                   {!isPastDay && (
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-black text-white text-[9px] p-2 rounded-lg border-2 border-black font-black whitespace-nowrap z-50 shadow-[2px_2px_0px_0px_#A3E635]">
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-black text-white text-[9px] p-2 rounded-lg border-2 border-black font-black whitespace-nowrap z-50 shadow-[2px_2px_0px_0px_#B1E55A]">
                       {matchingClients.map(c => <div key={c.id} className="uppercase font-mono-display tracking-tight">💰 {c.name.split(' ')[0]}: {monthLabel} {dayNumber}</div>)}
                     </div>
                   )}
@@ -499,8 +507,8 @@ function PaymentRadarCalendar({ clients }) {
               const d = new Date(c.agreementDate);
               const totalPayoutRemaining = (c.totalContractPayment || 0) - (c.amountPaid || 0);
               return (
-                <div key={c.id} className="bg-white/80 border border-black rounded-lg px-2 py-1 text-[9px] font-mono font-black uppercase flex justify-between items-center">
-                  <span className="truncate max-w-[140px]">{c.name}</span>
+                <div key={c.id} className="bg-white border-2 border-black rounded-lg px-2 py-1 text-[9px] font-mono font-black uppercase flex justify-between items-center shadow-[1px_1px_0px_0px_#000]">
+                  <span className="truncate max-w-[140px] text-black">{c.name}</span>
                   <span className="bg-black text-[#B1E55A] px-1 rounded shrink-0">CYCLE DAY {d.getDate()} (${totalPayoutRemaining})</span>
                 </div>
               );
@@ -508,64 +516,6 @@ function PaymentRadarCalendar({ clients }) {
           </div>
         )}
       </div>
-    </div>
-  );
-}
-
-// ==========================================
-// --- REVENUE CALCULATION AGGREGATOR ---
-// ==========================================
-function AggregatePipelineRevenue({ clientCollection }) {
-  const [showRevenue, setShowRevenue] = useState(false);
-
-  const aggregateMetrics = useMemo(() => {
-    let totalContractValue = 0;
-    let aggregateCollected = 0;
-    clientCollection.forEach(client => {
-      totalContractValue += (client.totalContractPayment || 0);
-      aggregateCollected += (client.amountPaid || 0);
-    });
-    return {
-      total: totalContractValue,
-      collected: aggregateCollected,
-      outstanding: totalContractValue - aggregateCollected
-    };
-  }, [clientCollection]);
-
-  return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 z-[9999] font-mono">
-      <button
-        type="button"
-        onClick={() => setShowRevenue(prev => !prev)}
-        className="w-full bg-black text-white p-4 rounded-xl border-4 border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center justify-between cursor-pointer select-none active:translate-x-[4px] active:translate-y-[4px]"
-      >
-        <div className="text-left">
-          <h3 className="font-bold uppercase text-xs tracking-wider text-neutral-400">AGGREGATE PIPELINE REVENUE</h3>
-          <p className="text-[9px] text-neutral-500 font-black uppercase mt-0.5 tracking-tight">
-            {showRevenue ? "👉 CLICK TO HIDE PIPELINE STREAM" : "👉 CLICK TO REVEAL PIPELINE STREAM"}
-          </p>
-        </div>
-        <div className="bg-[#5cd6ff] text-black font-black px-4 py-2 rounded-lg border-2 border-black text-xl tracking-wide font-mono min-w-[135px] text-center shadow-[2px_2px_0px_0px_rgba(255,255,255,0.15)]">
-          {showRevenue ? `$${aggregateMetrics.outstanding}` : "••••••"}
-        </div>
-      </button>
-
-      {showRevenue && (
-        <div className="mt-2 bg-[#FCF8F2] border-4 border-black rounded-xl p-4 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] text-black grid grid-cols-3 gap-2 text-center animate-in fade-in slide-in-from-bottom-2 duration-150">
-          <div className="border-2 border-black p-2 bg-white rounded-lg">
-            <span className="text-[8px] font-black text-gray-400 uppercase block">Total Booked</span>
-            <span className="text-xs font-black text-neutral-800">${aggregateMetrics.total}</span>
-          </div>
-          <div className="border-2 border-black p-2 bg-[#E8F5E9] rounded-lg">
-            <span className="text-[8px] font-black text-emerald-600 uppercase block">Collected</span>
-            <span className="text-xs font-black text-emerald-700">${aggregateMetrics.collected}</span>
-          </div>
-          <div className="border-2 border-black p-2 bg-[#FFF3E0] rounded-lg">
-            <span className="text-[8px] font-black text-amber-600 uppercase block">Outstanding</span>
-            <span className="text-xs font-black text-amber-700">${aggregateMetrics.outstanding}</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
