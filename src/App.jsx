@@ -26,7 +26,23 @@ const generateUniqueTheme = (seedString) => {
 
 const STAGES = ["IDEAS", "SHOT", "EDITING", "AWAITING APPROVAL", "SCHEDULED", "POSTED"];
 
-
+// ==========================================
+// --- NEW FEATURE 1: CAPACITY ANALYZER ---
+// ==========================================
+function CapacityAnalyzer({ assignedVideos, totalHours }) {
+  const maxHours = 35;
+  const utilization = Math.round((totalHours / maxHours) * 100);
+  
+  let systemColor = "bg-[#B1E55A]"; // Healthy Pastel Green
+  let statusLabel = "HEALTHY WORKLOAD";
+  
+  if (utilization >= 80 && utilization < 100) {
+    systemColor = "bg-[#FFDE4D]"; // Warning Yellow
+    statusLabel = "NEAR LIMIT WARNING";
+  } else if (utilization >= 100) {
+    systemColor = "bg-[#FF6B6B]"; // Overload Red
+    statusLabel = "CRITICAL OVERLOAD: RECOVERY NEEDED";
+  }
 
   return (
     <div className="w-full bg-white border-4 border-black p-6 shadow-[5px_5px_0px_0px_#000000] font-mono relative overflow-hidden rounded-2xl">
