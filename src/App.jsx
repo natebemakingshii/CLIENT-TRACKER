@@ -26,7 +26,23 @@ const generateUniqueTheme = (seedString) => {
 
 const STAGES = ["IDEAS", "SHOT", "EDITING", "AWAITING APPROVAL", "SCHEDULED", "POSTED"];
 
-
+// ==========================================
+// --- NEW FEATURE 1: CAPACITY ANALYZER ---
+// ==========================================
+function CapacityAnalyzer({ assignedVideos, totalHours }) {
+  const maxHours = 35;
+  const utilization = Math.round((totalHours / maxHours) * 100);
+  
+  let systemColor = "bg-[#B1E55A]"; // Healthy Pastel Green
+  let statusLabel = "HEALTHY WORKLOAD";
+  
+  if (utilization >= 80 && utilization < 100) {
+    systemColor = "bg-[#FFDE4D]"; // Warning Yellow
+    statusLabel = "NEAR LIMIT WARNING";
+  } else if (utilization >= 100) {
+    systemColor = "bg-[#FF6B6B]"; // Overload Red
+    statusLabel = "CRITICAL OVERLOAD: RECOVERY NEEDED";
+  }
 
   return (
     <div className="w-full bg-white border-4 border-black p-6 shadow-[5px_5px_0px_0px_#000000] font-mono relative overflow-hidden rounded-2xl">
@@ -71,60 +87,60 @@ const STAGES = ["IDEAS", "SHOT", "EDITING", "AWAITING APPROVAL", "SCHEDULED", "P
 // ==========================================
 // --- NEW FEATURE 2: SHOOT SCHEDULER ---
 // ==========================================
-//function ShootScheduler({ shoots }) {
-  //return (
-    //<div className="w-full bg-[#FCF8F2] border-4 border-black p-6 shadow-[5px_5px_0px_0px_#000000] font-mono rounded-2xl">
-      //<div className="flex items-center justify-between border-b-4 border-black pb-3 mb-6">
-        //<div className="flex items-center gap-2">
-          //<span className="text-xl">🎥</span>
-          //<h2 className="text-sm font-black tracking-tight uppercase">Production Logistics Run</h2>
-        //</div>
-      //</div>
-      //<div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        //{shoots.map((shoot, idx) => (
-         // <div key={idx} className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_#000000] flex flex-col justify-between rounded-xl overflow-hidden">
-           // <div className="bg-[#E3F2FD] p-3 border-b-4 border-black flex justify-between items-center">
-             // <div>
-               // <span className="text-[9px] font-black uppercase text-gray-500 block">CLIENT PIPELINE</span>
-                //<span className="text-xs font-black uppercase tracking-tight">{shoot.clientName}</span>
-              //</div>
-              //<span className={`text-[10px] font-black px-2 py-1 border-2 border-black rounded uppercase ${shoot.approved ? 'bg-[#B1E55A]' : 'bg-[#FFDE4D]'}`}>
-              //  {shoot.approved ? 'APPROVED' : 'PENDING'}
-              //</span>
-            //</div>
-            //<div className="p-3 grid grid-cols-2 gap-2 border-b-2 border-black bg-neutral-50 text-[10px] font-bold">
-              //<div>📍 LOC: {shoot.location}</div>
-              //<div>📅 DATE: {shoot.date}</div>
-            //</div>
-            //<div className="p-3 border-b-2 border-black bg-white">
-             // <span className="text-[10px] font-black uppercase text-gray-400 block mb-1">Batch Deliverables</span>
-              //<div className="flex flex-wrap gap-1">
-                //{shoot.deliverables.map((item, i) => (
-                 // <span key={i} className="bg-black text-white text-[9px] px-2 py-0.5 font-bold uppercase rounded">
-                 //   {item}
-                  //</span>
-                //))}
-              //</div>
-            //</div>
-            //<div className="p-3 bg-[#FFF9E6] text-[10px] font-bold">
-              //<span className="text-[9px] font-black uppercase text-gray-500 block mb-1.5">⚡ Deployment Kit Configuration</span>
-              //<div className="grid grid-cols-2 gap-1.5">
-                //{shoot.equipment.map((kit, i) => (
-                  //<div key={i} className="flex items-center gap-1.5">
-                    //<div className={`w-3 h-3 border border-black flex items-center justify-center ${kit.packed ? 'bg-black text-white' : 'bg-white'}`}>
-                      //{kit.packed && '✓'}
-                    //</div>
-                   // <span className="uppercase tracking-tight text-[9px]">{kit.name}</span>
-                  //</div>
-                //))}
-              //</div>
-            //</div>
-          //</div>
-        //))}
-      //</div>
-    //</div>
-  //);
-//}
+function ShootScheduler({ shoots }) {
+  return (
+    <div className="w-full bg-[#FCF8F2] border-4 border-black p-6 shadow-[5px_5px_0px_0px_#000000] font-mono rounded-2xl">
+      <div className="flex items-center justify-between border-b-4 border-black pb-3 mb-6">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">🎥</span>
+          <h2 className="text-sm font-black tracking-tight uppercase">Production Logistics Run</h2>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        {shoots.map((shoot, idx) => (
+          <div key={idx} className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_#000000] flex flex-col justify-between rounded-xl overflow-hidden">
+            <div className="bg-[#E3F2FD] p-3 border-b-4 border-black flex justify-between items-center">
+              <div>
+                <span className="text-[9px] font-black uppercase text-gray-500 block">CLIENT PIPELINE</span>
+                <span className="text-xs font-black uppercase tracking-tight">{shoot.clientName}</span>
+              </div>
+              <span className={`text-[10px] font-black px-2 py-1 border-2 border-black rounded uppercase ${shoot.approved ? 'bg-[#B1E55A]' : 'bg-[#FFDE4D]'}`}>
+                {shoot.approved ? 'APPROVED' : 'PENDING'}
+              </span>
+            </div>
+            <div className="p-3 grid grid-cols-2 gap-2 border-b-2 border-black bg-neutral-50 text-[10px] font-bold">
+              <div>📍 LOC: {shoot.location}</div>
+              <div>📅 DATE: {shoot.date}</div>
+            </div>
+            <div className="p-3 border-b-2 border-black bg-white">
+              <span className="text-[10px] font-black uppercase text-gray-400 block mb-1">Batch Deliverables</span>
+              <div className="flex flex-wrap gap-1">
+                {shoot.deliverables.map((item, i) => (
+                  <span key={i} className="bg-black text-white text-[9px] px-2 py-0.5 font-bold uppercase rounded">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="p-3 bg-[#FFF9E6] text-[10px] font-bold">
+              <span className="text-[9px] font-black uppercase text-gray-500 block mb-1.5">⚡ Deployment Kit Configuration</span>
+              <div className="grid grid-cols-2 gap-1.5">
+                {shoot.equipment.map((kit, i) => (
+                  <div key={i} className="flex items-center gap-1.5">
+                    <div className={`w-3 h-3 border border-black flex items-center justify-center ${kit.packed ? 'bg-black text-white' : 'bg-white'}`}>
+                      {kit.packed && '✓'}
+                    </div>
+                    <span className="uppercase tracking-tight text-[9px]">{kit.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // ==========================================
 // --- NEW FEATURE 3: DEADLINE PREDICTOR ---
