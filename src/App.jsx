@@ -87,9 +87,9 @@ function CapacityAnalyzer({ assignedVideos, totalHours }) {
 // ==========================================
 // --- NEW FEATURE 2: SHOOT SCHEDULER ---
 // ==========================================
-function ShootScheduler({ shoots }) {
+//function ShootScheduler({ shoots }) {
   return (
-    <div className="w-full bg-[#FCF8F2] border-4 border-black p-6 shadow-[5px_5px_0px_0px_#000000] font-mono rounded-2xl">
+   // <div className="w-full bg-[#FCF8F2] border-4 border-black p-6 shadow-[5px_5px_0px_0px_#000000] font-mono rounded-2xl">
       <div className="flex items-center justify-between border-b-4 border-black pb-3 mb-6">
         <div className="flex items-center gap-2">
           <span className="text-xl">🎥</span>
