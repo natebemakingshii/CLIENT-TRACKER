@@ -23,50 +23,6 @@ const generateUniqueTheme = (seedString) => {
 };
 
 // ==========================================
-// --- PRODUCTION LOGISTICS SCHEDULE ---
-// ==========================================
-function ShootScheduler({ shoots }) {
-  return (
-    <div className="w-full bg-[#FCF8F2] border-4 border-black p-6 shadow-[5px_5px_0px_0px_#000000] font-mono rounded-2xl">
-      <div className="flex items-center justify-between border-b-4 border-black pb-3 mb-6">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">🎥</span>
-          <h2 className="text-sm font-black tracking-tight uppercase">Production Logistics Run</h2>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {shoots.map((shoot, idx) => (
-          <div key={idx} className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_#000000] flex flex-col justify-between rounded-xl overflow-hidden">
-            <div className="bg-[#E3F2FD] p-3 border-b-4 border-black flex justify-between items-center">
-              <div>
-                <span className="text-[9px] font-black uppercase text-gray-500 block">CLIENT PIPELINE</span>
-                <span className="text-xs font-black uppercase tracking-tight">{shoot.clientName}</span>
-              </div>
-              <span className={`text-[10px] font-black px-2 py-1 border-2 border-black rounded uppercase ${shoot.approved ? 'bg-[#B1E55A]' : 'bg-[#FFD93D]'}`}>
-                {shoot.approved ? 'APPROVED' : 'PENDING'}
-              </span>
-            </div>
-            <div className="p-3 space-y-2 text-xs font-bold border-b-4 border-black bg-neutral-50/50">
-              <div className="flex justify-between">
-                <span className="text-gray-400">DATE TIMEFRAME:</span>
-                <span className="font-black text-black uppercase">{shoot.date}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">GEOGRAPHIC LOC:</span>
-                <span className="font-black text-black uppercase">{shoot.location}</span>
-              </div>
-            </div>
-            <div className="p-2.5 bg-white text-[10px] font-mono text-gray-600 italic">
-              ⚡ {shoot.notes.toUpperCase()}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ==========================================
 // --- COGNITIVE PREDICTION ENGINE ---
 // ==========================================
 function PredictionForecaster({ totalRemainingVideos, weeklyVelocity }) {
@@ -350,15 +306,12 @@ function MilestoneTracker({ onTodoStateChange, refreshTrigger }) {
 function PaymentRadarCalendar({ clients }) {
   const [monthOffset, setMonthOffset] = useState(0);
 
+  // Safe and precise rolling calendar window calculation algorithm
   const rollingDays = useMemo(() => {
-    const base = new Date();
-    base.setDate(base.getDate() - 3); 
-    base.setMonth(base.getMonth() + monthOffset);
-
     const arr = [];
     for (let i = 0; i < 28; i++) {
-      const d = new Date(base.getTime());
-      d.setDate(base.getDate() + i);
+      const d = new Date();
+      d.setDate(d.getDate() - 3 + i + (monthOffset * 28));
       arr.push(d);
     }
     return arr;
@@ -548,12 +501,6 @@ export default function App() {
   const [editPaid, setEditPaid] = useState('');
   const [weeklyTarget, setWeeklyTarget] = useState(3);
 
-  // Fallback Predefined Mock Collections
-  const mockShoots = [
-    { clientName: "AURA STREETWEAR", date: "2026-06-02", location: "BOLE STUDIO S2", approved: true, notes: "Multicam rig setup for lookbook sequence layout" },
-    { clientName: "ZEGNA CAPITAL", date: "2026-06-09", location: "CBE HEADQUARTERS FL 18", approved: false, notes: "Corporate dynamic panning shots and executive dialogue run" }
-  ];
-
   useEffect(() => {
     const syncClientsDatabase = async () => {
       const { data, error } = await supabase
@@ -604,7 +551,9 @@ export default function App() {
     const vComp = parseInt(newVideosCompleted) || 0;
     const totalPay = parseInt(newTotalPayment) || 0;
     const paidAmt = parseInt(newAmountPaid) || 0;
-    const rateCalc = (vRem + vComp) > 0 ? Math.round(totalPay / (vRem + vComp)) : 150;
+    
+    // CRITICAL BUG FIX: Added structural guard block to avoid dividing by 0 (Infinity), which breaks row serialization
+    const rateCalc = (vRem + vComp) > 0 ? Math.round(totalPay / (vRem + vComp)) : totalPay;
     const paceTarget = parseInt(newTargetPace) || 3;
     const nextOrderValue = clients.length > 0 ? Math.max(...clients.map(c => c.displayOrder || 0)) + 1 : 1;
 
@@ -742,7 +691,7 @@ export default function App() {
         <div>
           <h1 className="text-sm font-black tracking-tighter uppercase flex items-center gap-2">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#B1E55A] animate-pulse" />
-            BUILD MODE TRACKER <span className="text-gray-500 font-bold">v3.9.4</span>
+            BUILD MODE TRACKER <span className="text-gray-500 font-bold">v3.9.5</span>
           </h1>
           <p className="text-[9px] font-bold text-neutral-400 tracking-tight mt-0.5">
             Control Center Terminal // Live Supabase Connection Node
@@ -836,7 +785,6 @@ export default function App() {
                 const isExpanded = expandedClientId === client.id;
                 const outstandingDue = client.totalContractPayment - client.amountPaid;
                 
-                // Progress calculations for the new bar element
                 const totalVideosPlanned = client.videosCompleted + client.videosRemaining;
                 const pipelineCompletionPct = totalVideosPlanned > 0 
                   ? Math.round((client.videosCompleted / totalVideosPlanned) * 100) 
@@ -861,7 +809,7 @@ export default function App() {
                     {isExpanded && (
                       <div className="p-4 bg-white space-y-4 font-mono text-xs border-b-2 border-black">
                         
-                        {/* NEW INTEGRATED NEO-BRUTALIST PROGRESS BAR */}
+                        {/* NEO-BRUTALIST PROGRESS BAR */}
                         <div className="border-2 border-black p-3 bg-[#FCF8F2] rounded-xl shadow-[2px_2px_0px_0px_#000]">
                           <div className="flex justify-between items-center text-[9px] font-black uppercase mb-1.5 text-black">
                             <span>🎬 PIPELINE COMPLETION DYNAMICS</span>
@@ -981,10 +929,9 @@ export default function App() {
           </div>
         </div>
 
-        {/* --- MODULE LAYER 2: LOGISTICS SCHEDULING & MARGINS --- */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <div className="xl:col-span-2 space-y-6">
-            <ShootScheduler shoots={mockShoots} />
+        {/* --- MODULE LAYER 2: MARGINS MATRIX --- */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+          <div className="lg:col-span-7 xl:col-span-7 space-y-6">
             <ProfitabilityMatrix clientData={clients} />
           </div>
         </div>
